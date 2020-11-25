@@ -311,4 +311,56 @@ Function Components Everywhere!
 
         -   create state that is for loading!
 
-        1.
+        1. useState(false)
+
+        2. pass in the loading prop to IngredientForm so that it can show it
+
+        3. `props.loading ? <LoadingIndicator /> : null}` === `props.loading && <LoadingIndicator>`
+
+            - JS syntactic sugar
+
+        4. I thought having the loading indicator would be nice in the button.. it doesnt.
+
+        5. error modal + loading indicator!
+
+            - look at Ingredients.js
+
+    11. ## setState & setState batching!
+
+        -   after setState() is invoked, you can't immediately use the new state when NOT using the function form! It is because it is batched!
+
+        -   all state updates from one and same synchronous event handler are batched together!
+
+            -   `const clearError = () => { setError(null); setIsLoading(false); };`
+                we see that there are two setState's in this one function, React hooks will batch these two setState's and render once!
+            -   the setError and setIsLoading is synchronously executed, then batched, then rendered as one setState update
+
+        -   Consider this code:
+
+            `console.log(name); // prints name state, e.g. 'Manu'`
+            `setName('Max');`
+            `console.log(name); // ??? what gets printed? 'Max'?`
+
+            You could think that accessing the name state after setName('Max'); should yield the new value (e.g. 'Max') but this is **NOT** the case. Keep in mind, that the new state value is **only** available in the next component render cycle (which gets scheduled by calling setName()).
+
+            Both concepts (batching and when new state is available) behave in the same way for both functional components with hooks as well as class-based components with this.setState()!
+
+    12. useReducer() vs useState()
+
+    -   reducers are functions that takes some input and returns some output
+    -   useReducer() !== Redux, they have **NO** relationship
+    -   using a reducer is much cleaner! just dispatch an action! :D
+
+        -   the other way was okay too, no problem, but useReducer() is a more structural approach
+
+    -   Hands On
+        1. creating reducer
+        2. useReducer()
+        3. const [userIngredient, dispatch] = useReducer(ingredientReducer, []);
+        4. when working with useReducer(), React will re-render the component whenever your reducer returns the new state
+        5. rename all the variables to make it work
+        6. it really is the same... here it seems a little off because we're not messing with actionTypes, action creators, thunk and objects to update the state
+        7. Related props?
+            - loading and error?
+              Yes they are!
+        8. ## HTTP with useReducer? Thunk alternative?
