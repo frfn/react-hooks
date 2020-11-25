@@ -5,8 +5,9 @@ import "./IngredientForm.css";
 
 const IngredientForm = React.memo((props) => {
 	const [currentTitle, setTitle] = useState("");
-
 	const [currentAmount, setAmount] = useState("");
+
+	console.log("RERENDER after each key stroke?");
 
 	const submitHandler = (event) => {
 		event.preventDefault();
@@ -92,7 +93,7 @@ const IngredientForm = React.memo((props) => {
 						<button onSubmit={submitHandler} type="submit">
 							Add Ingredient
 						</button>
-						{console.log(props.loading)}
+						{/* {console.log(props.loading)} */}
 						{props.loading && <LoadingIndicator />}
 					</div>
 				</form>

@@ -15,7 +15,7 @@ Function Components Everywhere!
     - (lifecycle hooks / methods)
         - componentDidMount(), etc
 
-## Conversion is annoying.
+## Conversion is annoying. Class to Functional?
 
 -   from functional to class-based if you need state, not anymore
     -   functional components becomes stateful
@@ -40,7 +40,7 @@ Function Components Everywhere!
     - `index.js` and `App.js` are very lean
     - not all files are being used yet, will be used as we keep going on with course
 
-2. React.memo( functional component )
+2. `React.memo( functional component )`
 
     - used to combat unnecessary renders
     - only rerenders when prop changes
@@ -78,31 +78,31 @@ Function Components Everywhere!
 
         -   the anonymous function passed into updateState() is a closure, as explained, React DOM pools in events.
 
-        updateState( (here) => {
-        ...this is a function, calling a function!
-        })
+        `updateState( (here) => { ...this is a function, calling a function! })`
 
-              - React is built like this, so when the event object is passed for React, it pools the event objects instead of creating new objects, it REUSES the event objects, and the consequence for this, is that for the second key stroke and the fact that we have a closure, and we locked in the event for the first key stroke as the event object, THAT will be USED inside that function, but outside the INNER function (ie. prevState => {}), we will be reusing the event object for the SAME first key stroke if we use the event object PASSED IN the argument. We are using the WRONG event object. CREATE A NEW VARIABLE.
+        -   React is built like this, so when the `event` object is passed for React, it pools the event objects instead of creating new objects, it REUSES the event objects, and the consequence for this, is that for the second key stroke and the fact that **we have a closure**, and we locked in the event for the first key stroke as the event object, THAT will be USED inside that function, but outside the INNER function (ie. prevState => {}), we will be reusing the event object for the SAME first key stroke if we use the event object PASSED IN the argument. We are using the WRONG event object.
 
-              - if not done correctly and developer uses the passed in event obj, the inner method will LOCK in the event object initially, and will causes issues. It will keep reusing the same value over and over again.
+        CREATE A NEW VARIABLE.
 
-              - **SOLUTION** - you must create a variable to be used, INSIDE the update state function, again... a variable TO BE USED inside the updateState function, it's like a middleware, it's the between value that will get updated
+        -   if not done correctly and developer uses the passed in event obj, the inner method will LOCK in the event object initially, and will causes issues. It will keep reusing the same value over and over again.
+
+        -   **SOLUTION** - you must create a variable to be used, INSIDE the update state function, again... a variable TO BE USED inside the updateState function, it's like a middleware, it's the between value that will get updated
 
         -   it isn't JS's fault, it's Reacts fault that we get a synthetic event, it uses a virtual DOM
             -   it reuses different objects, don't worry about it too much :)
 
-`onChange={(event) => { const newAmount = event.target.value; updateState((prevState) => ({ title: prevState.title, amount: newAmount, })); }}`
+        `onChange={(event) => { const newAmount = event.target.value; updateState((prevState) => ({ title: prevState.title, amount: newAmount, })); }}`
 
--   This was code inline for `onChange={}` for the `<input>` fields, I outsourced it and made it dynamic
+        -   This was code inline for `onChange={}` for the `<input>` fields, I outsourced it and made it dynamic. Edit: using `useReducer()` now!
 
-    > TIP: what is closure?
-    > Want to make a counter, where all functions can use it, but also make sure that the counter variable is NOT global?
-    > const add = () => {
+            > TIP: what is closure?
+            > Want to make a counter, where all functions can use it, but also make sure that the counter variable is NOT global?
+            > const add = () => {
 
-        let counter = 0;
-        return () => counter + 1
+                let counter = 0;
+                return () => counter + 1
 
-    }
+            }
 
 ### Array Destructuring
 
@@ -110,7 +110,7 @@ Function Components Everywhere!
 
 ### Multiple States
 
--   use many states!
+-   use can use many states to keep track of multiple variables!
 -   create multiple useState()!
 -   use objects, or arrays if there is an object that you need as a clump to be updated, other wise, manage them independently!!
 -   in turn, we also bypass the closure properties and we don't need to worry about it anymore!
@@ -138,19 +138,21 @@ Function Components Everywhere!
 
 ## Firebase project
 
-    -   firebase sets an ID for us
-    -   created axios instance in /axios ... npm i --save axios
-    -   `fetch()` API takes a url, it does a `GET` request by default, so an argument is needed, an object that sets the `GET` to `POST`
-    -   `JSON` is library that contains `.stringify()` which transforms javascript objects to JSON
-    -   headers?
-        -   you must set it
-        -   it's configured in Firebase
-            `headers: {'Content-Type': 'application/json'}`
-    -   `axios`
-        -   easier to use :), look at code
-    -   Code I created... I could've just passed it in the component, smh...
+-   firebase sets an ID for us
+-   created axios instance in /axios ... npm i --save axios
+-   `fetch()` API takes a url, it does a `GET` request by default, so an argument is needed, an object that sets the `GET` to `POST`
+-   `JSON` is library that contains `.stringify()` which transforms javascript objects to JSON
+-   headers?
+    -   you must set it
+    -   it's configured in Firebase
+        `headers: {'Content-Type': 'application/json'}`
+-   `axios`
 
--   `const [ing, setIng] = useState([]); axios.get("axiosAPI-ingredients.json").then((response) => { const fetchedIng = []; for (let ing in response.data) { fetchedIng.push(response.data[ing]); } // console.log(fetchedIng); setIng(fetchedIng); });`
+    -   easier to use :), look at code
+
+-   Code I created... I could've just passed it in the ingredients list component so it can show the ingredients, and not call it in the component itself, smh...
+
+    `const [ing, setIng] = useState([]); axios.get("axiosAPI-ingredients.json").then((response) => { const fetchedIng = []; for (let ing in response.data) { fetchedIng.push(response.data[ing]); } // console.log(fetchedIng); setIng(fetchedIng); });`
 
 ## Lifecycle Hooks in React Hooks
 
@@ -183,9 +185,9 @@ Function Components Everywhere!
         `useEffect(() => { this will only run useEffect ONCE, during startup }, [])`
 
     -   shouldComponentUpdate: it runs only when certain item is updated
-        `useEffect(() => { points to prop, sees if prop updates then will run code inside `useEffect()`}, [props.xyz])`
+        `useEffect(() => { points to prop, sees if prop updates then will run code inside useEffect()}, [props.xyz])`
 
-    -   componentWillUnmount:
+    -   componentWillUnmount: clean up code ie. clearing out a timer
         `useEffect(() => { ...code return () => { // this is where clean up happens, componentWillUnmount } }, [props.xyz])`
 
     -   componentDidUpdate: it runs every time state/item is updated
@@ -196,19 +198,19 @@ Function Components Everywhere!
 -   modifying `<Search>` component
 
     1.  added useState()
-    2.  two way binding for input
+    2.  two way binding for input, `value={}`
     3.  outsourced change method
-    4.  filter?
+    4.  filtering of values by search bar? How? Firebase has a filter option
 
         -   options:
 
         1. we can send an HTTP request for every key stroke, would work
         2. just use useEffect(), same idea, more elegant!
 
-        -   `[filter]` is showing a warning because we rely on props
+        -   `[filter]` is showing a warning because we rely on props, we used onLoadIngredients, so pop it in there
 
-        1. adding props like `[filter, props]` is a problem bc every time a prop is passed, it rerenders!
-        2. it might sound strange that functions can change, but don't forget in JS that functions are objects and behave like any other value
+        1. adding props like `[filter, props]` is a problem bc every time a prop is passed, it rerenders! NO good.
+        2. it might sound strange that functions can change, but if the component rerenders, that object is now different
         3. `[filter, onLoadIngredients]` will work because of the fact above, a function behaves like any other value
             > TIP TO MYSELF: the ingredient is updated in `Ingredients.js` bc of the function!
         4. Published in Database
@@ -225,30 +227,33 @@ Function Components Everywhere!
 
         1. the reason is that when the MAIN component rerenders, `Ingredients.js`, it creates a whole new component, which in turn creates new variables and functions.
 
-        -   New function? Yes, a function does change, and here we can see it in effect, negatively. The new function is passed on to `<Search>` and it repeats the process!
+        -   New function? Yes, a function does change, and here we can see it in effect, negatively. The _new_ function is passed on to `<Search>` and it repeats the process! All it means is that since component rerenders, a _new_, not really new, object has been created. **newObj === changed function**
 
         ## useCallback – the solution
 
-        -   returns a memoized version of the callback only if the inputs has changed
-            it is **caching** the function, SO that we don't create a new function and it does not change anymore
+        -   it returns a memoized version of the callback only if the inputs has changed, so if component rerenders, it _survives_ the rerender, it's memoized so the same function is returned even of rerender
 
-        -   the second argument only asks what the dependencies ARE for the function, putting in ingredients does not make sense because in the whole function, not once was ingredient even called, it is NOT dependant.
+            -   it is **caching** the function, SO that we don't create a new function and it does not change anymore
 
-        -   once implemented, the function wrapped with useCallback, it will survive the rerender cycles, the function does NOT become recreated, and does NOT change!
+        -   the second argument only asks what the dependencies ARE for the function, putting in `ingredients` does not make sense because in the whole function, not once was ingredient even called, it is NOT dependant.
+
+        -   once implemented, the function is wrapped with `useCallback()`, it will survive the rerender cycles, the function does NOT become recreated, and does NOT change!
 
         -   the search effect happens because it will reachout to the server and filters by way of a search query, ie. &equalTo="Apple", if lowercase apple, it will not show!
 
     6.  Another render cycle?
 
         -   it comes from a redundant HTTPS call.
-            Because we're called another HTTPS call... lol.
+            Because we called another HTTPS call... lol.
             We get rid of the axios get call in Ingredient.js
 
-    7.  No rerenders for every key stroke
+            commented code with `useEffect(() => {}, [])`
+
+    7.  No rerenders for every key stroke in `<Search>` component
 
         -   create a timer.
             How? Use setTimeout()!
-            EDIT: there is a better way. Go to 8.
+            EDIT: there is a better way. Go to 8 after reading all the content for 7.
 
         -   even with set timeout, it will still send the exact amount of key strokes you're putting in... it just defers, there must be a way.
 
@@ -257,26 +262,26 @@ Function Components Everywhere!
             so it will **not** be the same value _AFTER_ the timer starts.
             the value that is checked, IS the **LOCKED IN** value!
 
-                **THIS IS IMPORTANT.**
+            **THIS IS IMPORTANT.**
 
-        so the filter value that is checked is not the same, it will be the value 500ms ago!
+        so the `filter` value that is checked is not the same, it will be the value 500ms ago!
 
-        -   useRef()
+        -   `useRef()`
 
         we need to compare the old value and the new value of `filter`.. how?
 
-        use useRef()!
+        use `useRef()!`
 
         1. know what it is: it allows to us to create a reference
         2. create an instance
-            - const inputRef = useRef();
+            - `const inputRef = useRef();`
         3. in `<input>`, use the inputRef as the value for `ref` property of `<input>`
 
     8.  Better way than using setTimeout(), this is not the perfect way!
 
         -   were setting the timer, only when the useEffect() runs, but useEffect() in the end runs because our input, `filter`, changes.
 
-        so we're setting a bunch of timers that is set independantly. not what we want.
+        so we're setting a bunch of timers that is set independantly. not what we want. Example below!
 
         1. instead of using a timer, for every key stroke, lets clear the previous timer because it doesn't matter to us anymore, we do not care about the old key stroke if there is a new one!
 
@@ -332,8 +337,8 @@ Function Components Everywhere!
         -   all state updates from one and same synchronous event handler are batched together!
 
             -   `const clearError = () => { setError(null); setIsLoading(false); };`
-                we see that there are two setState's in this one function, React hooks will batch these two setState's and render once!
-            -   the setError and setIsLoading is synchronously executed, then batched, then rendered as one setState update
+                we see that there are two setState's in this one function, React hooks will batch these two setState's and render _only_ once!
+            -   the setError and setIsLoading is synchronously executed, then batched, then rendered as _one_ setState update
 
         -   Consider this code:
 
@@ -343,23 +348,23 @@ Function Components Everywhere!
 
             You could think that accessing the name state after setName('Max'); should yield the new value (e.g. 'Max') but this is **NOT** the case. Keep in mind, that the new state value is **only** available in the next component render cycle (which gets scheduled by calling setName()).
 
-            Both concepts (batching and when new state is available) behave in the same way for both functional components with hooks as well as class-based components with this.setState()!
+            Both concepts (batching and when new state is available) behave in the same way for both functional components with hooks as well as class-based components with `this.setState()`!
 
-    12. useReducer() vs useState()
+    12. `useReducer()` vs `useState()`
 
-    -   use useReducer if you know that you're state will be a little complex than just a boolean value
+    -   use `useReducer()` if you know that you're state will be a little complex than just a boolean value
     -   reducers are functions that takes some input and returns some output
-    -   useReducer() !== Redux, they have **NO** relationship
+    -   `useReducer()` !== Redux, they have **NO** relationship
     -   using a reducer is much cleaner! just dispatch an action! :D
 
-        -   the other way was okay too, no problem, but useReducer() is a more structural approach
+        -   the other way was okay too, no problem, but `useReducer()` is a more structural approach
 
     -   Hands On
 
         1. creating reducer
-        2. useReducer()
+        2. `useReducer()`
         3. const [userIngredient, dispatch] = useReducer(ingredientReducer, []);
-        4. when working with useReducer(), React will re-render the component whenever your reducer returns the new state
+        4. when working with `useReducer()`, React will re-render the component whenever your reducer returns the new state
         5. rename all the variables to make it work
         6. it really is the same... here it seems a little off because we're not messing with actionTypes, action creators, thunk and objects to update the state
         7. Related props?
@@ -371,8 +376,27 @@ Function Components Everywhere!
 
             - switched back to const [isLoading, setIsLoading] = useState(false)
 
-        8. ## HTTP with useReducer? Thunk alternative?
+        8. Confirmed my suspicion that the reason why dispatchHttp is NOT getting executed is because of probably batched renders? or because it is executed in the promise? Or maybe something not even related.
 
-    13. useContext()
+    13. `useContext()`
 
-    -
+    -   Auth.js + App.js
+
+    14. `useMemo()`
+
+    `useCallback` VS `useMemo`?
+
+    -   So what is the difference? `useCallback` returns its function **uncalled** so you can call it later, while `useMemo` **calls** its function and returns the result.
+
+    useCallback just saves and returns the **function**, so no new functions are generated,
+
+    useMemo saves and returns the **values**, so no new values are generated
+
+    1. useCallback for addingIngredient and deletingIngredient
+    2. React.memo() for IngredientList.js **is** needed!, add React.memo in the IngredientList.js
+    3. you can use useMemo
+
+        - changing IngredientList.js back to how it started to use useMemo
+        - it must ALSO have the dependencies as the _SECOND_ argument
+
+        `const ing = useMemo(() => { return <List onRemoveItem={removeIngredientHandler} ingredients={userIngredient}></List> }, [removeIngredientHandler, userIngredient])`

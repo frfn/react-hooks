@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useCallback, useReducer } from "react";
+import React, {
+	useState,
+	// useEffect,
+	useCallback,
+	useReducer,
+	useMemo,
+} from "react";
 import IngredientList from "./IngredientList";
 import IngredientForm from "./IngredientForm";
 import Search from "./Search";
@@ -48,9 +54,10 @@ const Ingredients = () => {
 		error: null,
 	});
 
-	// const [ingredients, setIngredients] = useState([]);
 	const [isLoading, setIsLoading] = useState(false);
+
 	// const [error, setError] = useState();
+	// const [ingredients, setIngredients] = useState([]);
 
 	// not needed because GET method is done in <Search>
 	/* useEffect(() => {
@@ -69,75 +76,80 @@ const Ingredients = () => {
 			});
   }, []); // componentDidMount() */
 
-	useEffect(() => {
-		console.log("update?", userIngredient);
-	}, [userIngredient]);
+	// useEffect(() => {
+	// 	console.log("update?", userIngredient);
+	// }, [userIngredient]);
 
-	const addIngredientHandler = (ingredient) => {
-		dispatchHttp({
-			type: "SEND",
-		});
-		setIsLoading(true);
-		/* AXIOS API */
-		axios
-			.post("axiosAPI-ingredients.json", ingredient)
-			.then((response) => {
-				dispatchHttp({ type: "RES" });
-				setIsLoading(false);
-				// console.log(response.data.name);
-				// setIngredients((prevState) => [
-				// 	...prevState,
-				// 	{
-				// 		...ingredient,
-				// 		id: response.data.name, // axios generated
-				// 	},
-				// ]);
-				dispatch({
-					type: "ADD",
-					ingredient: { ...ingredient, id: response.data.name },
-				});
-			})
-			.catch((error) => {
-				// console.log(error);
-				dispatchHttp({
-					type: "ERROR",
-					error: error.message + " - Something went wrong!",
-				});
-				// setError(error.message + " - Something went wrong!");
-				setIsLoading(false);
+	const addIngredientHandler = useCallback(
+		(ingredient) => {
+			dispatchHttp({
+				type: "SEND",
 			});
+			setIsLoading(true);
+			/* AXIOS API */
+			axios
+				.post("axiosAPI-ingredients.json", ingredient)
+				.then((response) => {
+					dispatchHttp({ type: "RES" });
+					setIsLoading(false);
+					// console.log(response.data.name);
+					// setIngredients((prevState) => [
+					// 	...prevState,
+					// 	{
+					// 		...ingredient,
+					// 		id: response.data.name, // axios generated
+					// 	},
+					// ]);
+					dispatch({
+						type: "ADD",
+						ingredient: { ...ingredient, id: response.data.name },
+					});
+				})
+				.catch((error) => {
+					// console.log(error);
+					dispatchHttp({
+						type: "ERROR",
+						error: error.message + " - Something went wrong!",
+					});
+					// setError(error.message + " - Something went wrong!");
+					setIsLoading(false);
+				});
 
-		/* FETCH API */
-		// fetch(
-		// 	"https://react-hooks-project-dc5a7.firebaseio.com/fetchAPI-ingredients.json",
-		// 	{
-		// 		method: "POST",
-		// 		body: JSON.stringify(ingredient),
-		// 		headers: { "Content-Type": "application/json" },
-		// 	}
-		// )
-		// 	.then((response) => {
-		// 		console.log(response);
-		// 		return response.json();
-		// 	})
-		// 	.then((responseData) => {
-		// 		console.log(responseData);
-		// 		setIngredients((prevState) => {
-		// 			return [
-		// 				...prevState,
-		// 				{
-		// 					id: responseData.name, // created by firebase
-		// 					...ingredient,
-		// 				},
-		// 			];
-		// 		});
-		// 	})
-		// 	.catch((error) => {
-		// 		console.log(error);
-		// 	});
-	};
+			/* FETCH API */
+			// fetch(
+			// 	"https://react-hooks-project-dc5a7.firebaseio.com/fetchAPI-ingredients.json",
+			// 	{
+			// 		method: "POST",
+			// 		body: JSON.stringify(ingredient),
+			// 		headers: { "Content-Type": "application/json" },
+			// 	}
+			// )
+			// 	.then((response) => {
+			// 		console.log(response);
+			// 		return response.json();
+			// 	})
+			// 	.then((responseData) => {
+			// 		console.log(responseData);
+			// 		setIngredients((prevState) => {
+			// 			return [
+			// 				...prevState,
+			// 				{
+			// 					id: responseData.name, // created by firebase
+			// 					...ingredient,
+			// 				},
+			// 			];
+			// 		});
+			// 	})
+			// 	.catch((error) => {
+			// 		console.log(error);
+			// 	});
+		},
+		[
+			/* setIsLoading, dispatchHttp */
+		] // setIsLoading & dispatchHttp does not have to be updated
+	);
 
-	const removeIngredientHandler = (id) => {
+	const removeIngredientHandler = useCallback((id) => {
 		dispatchHttp({
 			type: "SEND",
 		});
@@ -179,7 +191,7 @@ const Ingredients = () => {
 					error: error.message + " - Something went wrong!",
 				});
 			});
-	};
+	}, []);
 
 	const filteredIngredientsHandler = useCallback((filteredIngredients) => {
 		// setIngredients(filteredIngredients);
@@ -192,6 +204,17 @@ const Ingredients = () => {
 	const clearError = () => {
 		dispatchHttp({ type: "CLEAR" });
 	};
+
+	const ingredientList = useMemo(
+		() => (
+			<IngredientList
+				onRemoveItem={removeIngredientHandler}
+				ingredients={userIngredient}
+			/>
+		),
+		[removeIngredientHandler, userIngredient]
+	);
+
 	return (
 		<div className="App">
 			{httpState.error && (
@@ -206,10 +229,13 @@ const Ingredients = () => {
 
 			<section>
 				<Search onLoadIngredients={filteredIngredientsHandler} />
-				<IngredientList
+				{ingredientList}
+				{/* 
+        Moving to ingredientList
+        <IngredientList
 					onRemoveItem={removeIngredientHandler}
 					ingredients={userIngredient}
-				/>
+				/> */}
 			</section>
 		</div>
 	);

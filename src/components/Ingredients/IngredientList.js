@@ -4,6 +4,7 @@ import "./IngredientList.css";
 import LoadingIndicator from "../UI/LoadingIndicator";
 
 const IngredientList = (props) => {
+	console.log("RERENDER LIST!");
 	return (
 		<section className="ingredient-list">
 			<h2>Loaded Ingredients</h2>
