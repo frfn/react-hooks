@@ -400,3 +400,7 @@ Function Components Everywhere!
         - it must ALSO have the dependencies as the _SECOND_ argument
 
         `const ing = useMemo(() => { return <List onRemoveItem={removeIngredientHandler} ingredients={userIngredient}></List> }, [removeIngredientHandler, userIngredient])`
+
+        - if you want to store components, use React.memo ONLY if you want to store values, you can use useMemo() so it does not have to recalculate!
+
+    > NOTE: you use useCallback for every function in Ingredients.js -- that is correct, you only use useMemo() if you want the component to keep the same value even after being rerendered so it doesn't have to keep grabbing the value from the parent component
