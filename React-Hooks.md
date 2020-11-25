@@ -384,23 +384,25 @@ Function Components Everywhere!
 
     14. `useMemo()`
 
-    `useCallback` VS `useMemo`?
+        `useCallback` VS `useMemo`?
 
-    -   So what is the difference? `useCallback` returns its function **uncalled** so you can call it later, while `useMemo` **calls** its function and returns the result.
+        -   So what is the difference? `useCallback` returns its function **uncalled** so you can call it later, while `useMemo` **calls** its function and returns the result.
 
-    useCallback just saves and returns the **function**, so no new functions are generated,
+        useCallback just saves and returns the **function**, so no new functions are generated,
 
-    useMemo saves and returns the **values**, so no new values are generated
+        useMemo saves and returns the **values**, so no new values are generated
 
-    1. useCallback for addingIngredient and deletingIngredient
-    2. React.memo() for IngredientList.js **is** needed!, add React.memo in the IngredientList.js
-    3. you can use useMemo
+        1. useCallback for addingIngredient and deletingIngredient
+        2. React.memo() for IngredientList.js **is** needed!, add React.memo in the IngredientList.js
+        3. you can use useMemo
 
-        - changing IngredientList.js back to how it started to use useMemo
-        - it must ALSO have the dependencies as the _SECOND_ argument
+            - changing IngredientList.js back to how it started to use useMemo
+            - it must ALSO have the dependencies as the _SECOND_ argument
 
-        `const ing = useMemo(() => { return <List onRemoveItem={removeIngredientHandler} ingredients={userIngredient}></List> }, [removeIngredientHandler, userIngredient])`
+            `const ing = useMemo(() => { return <List onRemoveItem={removeIngredientHandler} ingredients={userIngredient}></List> }, [removeIngredientHandler, userIngredient])`
 
-        - if you want to store components, use React.memo... ONLY if you want to store values, you can use useMemo() so it does not have to recalculate if component is rerendered!
+            - if you want to store components, use React.memo... ONLY if you want to store values, you can use useMemo() so it does not have to recalculate if component is rerendered!
 
-    > NOTE: you use useCallback for every function in Ingredients.js -- that is correct, you only use useMemo() if you want the component to keep the same value even after being rerendered so it doesn't have to keep grabbing the value from the parent component
+        > NOTE: you use useCallback for every function in Ingredients.js -- that is correct, you only use useMemo() if you want the component to keep the same value even after being rerendered so it doesn't have to keep grabbing the value from the parent component
+
+    15. Custom Hooks

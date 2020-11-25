@@ -1,7 +1,7 @@
 import React from "react"; // { useState }
 // import axios from "../../axios/axios";
 import "./IngredientList.css";
-import LoadingIndicator from "../UI/LoadingIndicator";
+// import LoadingIndicator from "../UI/LoadingIndicator";
 
 const IngredientList = (props) => {
 	console.log("RERENDER LIST!");
