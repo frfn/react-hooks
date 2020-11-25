@@ -197,212 +197,212 @@ Function Components Everywhere!
 
 -   modifying `<Search>` component
 
-    1.  added useState()
-    2.  two way binding for input, `value={}`
-    3.  outsourced change method
-    4.  filtering of values by search bar? How? Firebase has a filter option
+1.  added useState()
+2.  two way binding for input, `value={}`
+3.  outsourced change method
+4.  filtering of values by search bar? How? Firebase has a filter option
 
-        -   options:
+    -   options:
 
-        1. we can send an HTTP request for every key stroke, would work
-        2. just use useEffect(), same idea, more elegant!
+    1. we can send an HTTP request for every key stroke, would work
+    2. just use useEffect(), same idea, more elegant!
 
-        -   `[filter]` is showing a warning because we rely on props, we used onLoadIngredients, so pop it in there
+    -   `[filter]` is showing a warning because we rely on props, we used onLoadIngredients, so pop it in there
 
-        1. adding props like `[filter, props]` is a problem bc every time a prop is passed, it rerenders! NO good.
-        2. it might sound strange that functions can change, but if the component rerenders, that object is now different
-        3. `[filter, onLoadIngredients]` will work because of the fact above, a function behaves like any other value
-            > TIP TO MYSELF: the ingredient is updated in `Ingredients.js` bc of the function!
-        4. Published in Database
+    1. adding props like `[filter, props]` is a problem bc every time a prop is passed, it rerenders! NO good.
+    2. it might sound strange that functions can change, but if the component rerenders, that object is now different
+    3. `[filter, onLoadIngredients]` will work because of the fact above, a function behaves like any other value
+        > TIP TO MYSELF: the ingredient is updated in `Ingredients.js` bc of the function!
+    4. Published in Database
 
-        -   `ingredients` = the node that we are targeting
-        -   `.indexOn `= something that firebase will understand that promotes filtering
-        -   `["title"]` = the param that will be used
+    -   `ingredients` = the node that we are targeting
+    -   `.indexOn `= something that firebase will understand that promotes filtering
+    -   `["title"]` = the param that will be used
 
-            `{ "rules": { ".read": true, ".write": true, "ingredients": { ".indexOn": ["title"] }, "axiosAPI-ingredients": { ".indexOn": ["title"] } } }`
+        `{ "rules": { ".read": true, ".write": true, "ingredients": { ".indexOn": ["title"] }, "axiosAPI-ingredients": { ".indexOn": ["title"] } } }`
 
-    5.  infinite loop!
+5.  infinite loop!
 
-        -   caused by onLoadIngredients
+    -   caused by onLoadIngredients
 
-        1. the reason is that when the MAIN component rerenders, `Ingredients.js`, it creates a whole new component, which in turn creates new variables and functions.
+    1. the reason is that when the MAIN component rerenders, `Ingredients.js`, it creates a whole new component, which in turn creates new variables and functions.
 
-        -   New function? Yes, a function does change, and here we can see it in effect, negatively. The _new_ function is passed on to `<Search>` and it repeats the process! All it means is that since component rerenders, a _new_, not really new, object has been created. **newObj === changed function**
+    -   New function? Yes, a function does change, and here we can see it in effect, negatively. The _new_ function is passed on to `<Search>` and it repeats the process! All it means is that since component rerenders, a _new_, not really new, object has been created. **newObj === changed function**
 
-        ## useCallback – the solution
+    ## useCallback – the solution
 
-        -   it returns a memoized version of the callback only if the inputs has changed, so if component rerenders, it _survives_ the rerender, it's memoized so the same function is returned even of rerender
+    -   it returns a memoized version of the callback only if the inputs has changed, so if component rerenders, it _survives_ the rerender, it's memoized so the same function is returned even of rerender
 
-            -   it is **caching** the function, SO that we don't create a new function and it does not change anymore
+        -   it is **caching** the function, SO that we don't create a new function and it does not change anymore
 
-        -   the second argument only asks what the dependencies ARE for the function, putting in `ingredients` does not make sense because in the whole function, not once was ingredient even called, it is NOT dependant.
+    -   the second argument only asks what the dependencies ARE for the function, putting in `ingredients` does not make sense because in the whole function, not once was ingredient even called, it is NOT dependant.
 
-        -   once implemented, the function is wrapped with `useCallback()`, it will survive the rerender cycles, the function does NOT become recreated, and does NOT change!
+    -   once implemented, the function is wrapped with `useCallback()`, it will survive the rerender cycles, the function does NOT become recreated, and does NOT change!
 
-        -   the search effect happens because it will reachout to the server and filters by way of a search query, ie. &equalTo="Apple", if lowercase apple, it will not show!
+    -   the search effect happens because it will reachout to the server and filters by way of a search query, ie. &equalTo="Apple", if lowercase apple, it will not show!
 
-    6.  Another render cycle?
+6.  Another render cycle?
 
-        -   it comes from a redundant HTTPS call.
-            Because we called another HTTPS call... lol.
-            We get rid of the axios get call in Ingredient.js
+    -   it comes from a redundant HTTPS call.
+        Because we called another HTTPS call... lol.
+        We get rid of the axios get call in Ingredient.js
 
-            commented code with `useEffect(() => {}, [])`
+        commented code with `useEffect(() => {}, [])`
 
-    7.  No rerenders for every key stroke in `<Search>` component
+7.  No rerenders for every key stroke in `<Search>` component
 
-        -   create a timer.
-            How? Use setTimeout()!
-            EDIT: there is a better way. Go to 8 after reading all the content for 7.
+    -   create a timer.
+        How? Use setTimeout()!
+        EDIT: there is a better way. Go to 8 after reading all the content for 7.
 
-        -   even with set timeout, it will still send the exact amount of key strokes you're putting in... it just defers, there must be a way.
+    -   even with set timeout, it will still send the exact amount of key strokes you're putting in... it just defers, there must be a way.
 
-        -   Understand closures.
-            the `filter` value will be _LOCKED IN_ when the timer starts,
-            so it will **not** be the same value _AFTER_ the timer starts.
-            the value that is checked, IS the **LOCKED IN** value!
+    -   Understand closures.
+        the `filter` value will be _LOCKED IN_ when the timer starts,
+        so it will **not** be the same value _AFTER_ the timer starts.
+        the value that is checked, IS the **LOCKED IN** value!
 
-            **THIS IS IMPORTANT.**
+        **THIS IS IMPORTANT.**
 
-        so the `filter` value that is checked is not the same, it will be the value 500ms ago!
+    so the `filter` value that is checked is not the same, it will be the value 500ms ago!
 
-        -   `useRef()`
+    -   `useRef()`
 
-        we need to compare the old value and the new value of `filter`.. how?
+    we need to compare the old value and the new value of `filter`.. how?
 
-        use `useRef()!`
+    use `useRef()!`
 
-        1. know what it is: it allows to us to create a reference
-        2. create an instance
-            - `const inputRef = useRef();`
-        3. in `<input>`, use the inputRef as the value for `ref` property of `<input>`
+    1. know what it is: it allows to us to create a reference
+    2. create an instance
+        - `const inputRef = useRef();`
+    3. in `<input>`, use the inputRef as the value for `ref` property of `<input>`
 
-    8.  Better way than using setTimeout(), this is not the perfect way!
+8.  Better way than using setTimeout(), this is not the perfect way!
 
-        -   were setting the timer, only when the useEffect() runs, but useEffect() in the end runs because our input, `filter`, changes.
+    -   were setting the timer, only when the useEffect() runs, but useEffect() in the end runs because our input, `filter`, changes.
 
-        so we're setting a bunch of timers that is set independantly. not what we want. Example below!
+    so we're setting a bunch of timers that is set independantly. not what we want. Example below!
 
-        1. instead of using a timer, for every key stroke, lets clear the previous timer because it doesn't matter to us anymore, we do not care about the old key stroke if there is a new one!
+    1. instead of using a timer, for every key stroke, lets clear the previous timer because it doesn't matter to us anymore, we do not care about the old key stroke if there is a new one!
 
-        2. const timer = setTimeout() ...
+    2. const timer = setTimeout() ...
 
-        3. will be utilizing `useEffect(() => { return () =>{ } }, [props])`
+    3. will be utilizing `useEffect(() => { return () =>{ } }, [props])`
 
-            - the clean up!
-            - always has to be a function, a clean up function
-            - it will run RIGHT before the useEffect() runs the next time!
-            - if you have `[]` as the second argument, the cleanup function runs when the component gets unmounted.
+        - the clean up!
+        - always has to be a function, a clean up function
+        - it will run RIGHT before the useEffect() runs the next time!
+        - if you have `[]` as the second argument, the cleanup function runs when the component gets unmounted.
 
-            - so for each keystroke, ie. i type in "Apple"
+        - so for each keystroke, ie. i type in "Apple"
 
-                A: start 500ms
-                p: start 500ms
-                p: start 500ms
-                l: start 500ms
-                e: start 500ms
+            A: start 500ms
+            p: start 500ms
+            p: start 500ms
+            l: start 500ms
+            e: start 500ms
 
-                it starts a timer for EVERY stroke.
+            it starts a timer for EVERY stroke.
 
-                No need to do that, you can return () => { clearTimeout(timer) } to clean up the other timers and only start the timer at 'e' key stroke.
+            No need to do that, you can return () => { clearTimeout(timer) } to clean up the other timers and only start the timer at 'e' key stroke.
 
-            - this reduces redundant timers in memory, optimizied. Only one timer instead.
+        - this reduces redundant timers in memory, optimizied. Only one timer instead.
 
-    9.  deleting values in the database!
+9.  deleting values in the database!
 
-        -   did it myself :)
+    -   did it myself :)
 
-    10. ## UI - error modal + loading indicator!
+10. ## UI - error modal + loading indicator!
 
-        -   create state that is for loading!
+    -   create state that is for loading!
 
-        1. useState(false)
+    1. useState(false)
 
-        2. pass in the loading prop to IngredientForm so that it can show it
+    2. pass in the loading prop to IngredientForm so that it can show it
 
-        3. `props.loading ? <LoadingIndicator /> : null}` === `props.loading && <LoadingIndicator>`
+    3. `props.loading ? <LoadingIndicator /> : null}` === `props.loading && <LoadingIndicator>`
 
-            - JS syntactic sugar
+        - JS syntactic sugar
 
-        4. I thought having the loading indicator would be nice in the button.. it doesnt.
+    4. I thought having the loading indicator would be nice in the button.. it doesnt.
 
-        5. error modal + loading indicator!
+    5. error modal + loading indicator!
 
-            - look at Ingredients.js
+        - look at Ingredients.js
 
-    11. ## setState & setState batching!
+11. ## setState & setState batching!
 
-        -   after setState() is invoked, you can't immediately use the new state when NOT using the function form! It is because it is batched!
+    -   after setState() is invoked, you can't immediately use the new state when NOT using the function form! It is because it is batched!
 
-        -   all state updates from one and same synchronous event handler are batched together!
+    -   all state updates from one and same synchronous event handler are batched together!
 
-            -   `const clearError = () => { setError(null); setIsLoading(false); };`
-                we see that there are two setState's in this one function, React hooks will batch these two setState's and render _only_ once!
-            -   the setError and setIsLoading is synchronously executed, then batched, then rendered as _one_ setState update
+        -   `const clearError = () => { setError(null); setIsLoading(false); };`
+            we see that there are two setState's in this one function, React hooks will batch these two setState's and render _only_ once!
+        -   the setError and setIsLoading is synchronously executed, then batched, then rendered as _one_ setState update
 
-        -   Consider this code:
+    -   Consider this code:
 
-            `console.log(name); // prints name state, e.g. 'Manu'`
-            `setName('Max');`
-            `console.log(name); // ??? what gets printed? 'Max'?`
+        `console.log(name); // prints name state, e.g. 'Manu'`
+        `setName('Max');`
+        `console.log(name); // ??? what gets printed? 'Max'?`
 
-            You could think that accessing the name state after setName('Max'); should yield the new value (e.g. 'Max') but this is **NOT** the case. Keep in mind, that the new state value is **only** available in the next component render cycle (which gets scheduled by calling setName()).
+        You could think that accessing the name state after setName('Max'); should yield the new value (e.g. 'Max') but this is **NOT** the case. Keep in mind, that the new state value is **only** available in the next component render cycle (which gets scheduled by calling setName()).
 
-            Both concepts (batching and when new state is available) behave in the same way for both functional components with hooks as well as class-based components with `this.setState()`!
+        Both concepts (batching and when new state is available) behave in the same way for both functional components with hooks as well as class-based components with `this.setState()`!
 
-    12. `useReducer()` vs `useState()`
+12. `useReducer()` vs `useState()`
 
-    -   use `useReducer()` if you know that you're state will be a little complex than just a boolean value
-    -   reducers are functions that takes some input and returns some output
-    -   `useReducer()` !== Redux, they have **NO** relationship
-    -   using a reducer is much cleaner! just dispatch an action! :D
+-   use `useReducer()` if you know that you're state will be a little complex than just a boolean value
+-   reducers are functions that takes some input and returns some output
+-   `useReducer()` !== Redux, they have **NO** relationship
+-   using a reducer is much cleaner! just dispatch an action! :D
 
-        -   the other way was okay too, no problem, but `useReducer()` is a more structural approach
+    -   the other way was okay too, no problem, but `useReducer()` is a more structural approach
 
-    -   Hands On
+-   Hands On
 
-        1. creating reducer
-        2. `useReducer()`
-        3. const [userIngredient, dispatch] = useReducer(ingredientReducer, []);
-        4. when working with `useReducer()`, React will re-render the component whenever your reducer returns the new state
-        5. rename all the variables to make it work
-        6. it really is the same... here it seems a little off because we're not messing with actionTypes, action creators, thunk and objects to update the state
-        7. Related props?
+    1. creating reducer
+    2. `useReducer()`
+    3. const [userIngredient, dispatch] = useReducer(ingredientReducer, []);
+    4. when working with `useReducer()`, React will re-render the component whenever your reducer returns the new state
+    5. rename all the variables to make it work
+    6. it really is the same... here it seems a little off because we're not messing with actionTypes, action creators, thunk and objects to update the state
+    7. Related props?
 
-            - loading and error?
-              Yes they are!
+        - loading and error?
+          Yes they are!
 
-            - `dispatchHttp({type: "RES"})` does not work with Axios... it is not working for me
+        - `dispatchHttp({type: "RES"})` does not work with Axios... it is not working for me
 
-            - switched back to const [isLoading, setIsLoading] = useState(false)
+        - switched back to const [isLoading, setIsLoading] = useState(false)
 
-        8. Confirmed my suspicion that the reason why dispatchHttp is NOT getting executed is because of probably batched renders? or because it is executed in the promise? Or maybe something not even related.
+    8. Confirmed my suspicion that the reason why dispatchHttp is NOT getting executed is because of probably batched renders? or because it is executed in the promise? Or maybe something not even related.
 
-    13. `useContext()`
+13. `useContext()`
 
-    -   Auth.js + App.js
+-   Auth.js + App.js
 
-    14. `useMemo()`
+14. `useMemo()`
 
-        `useCallback` VS `useMemo`?
+    `useCallback` VS `useMemo`?
 
-        -   So what is the difference? `useCallback` returns its function **uncalled** so you can call it later, while `useMemo` **calls** its function and returns the result.
+    -   So what is the difference? `useCallback` returns its function **uncalled** so you can call it later, while `useMemo` **calls** its function and returns the result.
 
-        useCallback just saves and returns the **function**, so no new functions are generated,
+    useCallback just saves and returns the **function**, so no new functions are generated,
 
-        useMemo saves and returns the **values**, so no new values are generated
+    useMemo saves and returns the **values**, so no new values are generated
 
-        1. useCallback for addingIngredient and deletingIngredient
-        2. React.memo() for IngredientList.js **is** needed!, add React.memo in the IngredientList.js
-        3. you can use useMemo
+    1. useCallback for addingIngredient and deletingIngredient
+    2. React.memo() for IngredientList.js **is** needed!, add React.memo in the IngredientList.js
+    3. you can use useMemo
 
-            - changing IngredientList.js back to how it started to use useMemo
-            - it must ALSO have the dependencies as the _SECOND_ argument
+        - changing IngredientList.js back to how it started to use useMemo
+        - it must ALSO have the dependencies as the _SECOND_ argument
 
-            `const ing = useMemo(() => { return <List onRemoveItem={removeIngredientHandler} ingredients={userIngredient}></List> }, [removeIngredientHandler, userIngredient])`
+        `const ing = useMemo(() => { return <List onRemoveItem={removeIngredientHandler} ingredients={userIngredient}></List> }, [removeIngredientHandler, userIngredient])`
 
-            - if you want to store components, use React.memo... ONLY if you want to store values, you can use useMemo() so it does not have to recalculate if component is rerendered!
+        - if you want to store components, use React.memo... ONLY if you want to store values, you can use useMemo() so it does not have to recalculate if component is rerendered!
 
-        > NOTE: you use useCallback for every function in Ingredients.js -- that is correct, you only use useMemo() if you want the component to keep the same value even after being rerendered so it doesn't have to keep grabbing the value from the parent component
+    > NOTE: you use useCallback for every function in Ingredients.js -- that is correct, you only use useMemo() if you want the component to keep the same value even after being rerendered so it doesn't have to keep grabbing the value from the parent component
 
-    15. Custom Hooks
+15. Custom Hooks
