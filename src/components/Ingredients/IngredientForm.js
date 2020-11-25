@@ -92,6 +92,7 @@ const IngredientForm = React.memo((props) => {
 						<button onSubmit={submitHandler} type="submit">
 							Add Ingredient
 						</button>
+						{console.log(props.loading)}
 						{props.loading && <LoadingIndicator />}
 					</div>
 				</form>

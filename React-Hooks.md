@@ -347,6 +347,7 @@ Function Components Everywhere!
 
     12. useReducer() vs useState()
 
+    -   use useReducer if you know that you're state will be a little complex than just a boolean value
     -   reducers are functions that takes some input and returns some output
     -   useReducer() !== Redux, they have **NO** relationship
     -   using a reducer is much cleaner! just dispatch an action! :D
@@ -354,6 +355,7 @@ Function Components Everywhere!
         -   the other way was okay too, no problem, but useReducer() is a more structural approach
 
     -   Hands On
+
         1. creating reducer
         2. useReducer()
         3. const [userIngredient, dispatch] = useReducer(ingredientReducer, []);
@@ -361,6 +363,16 @@ Function Components Everywhere!
         5. rename all the variables to make it work
         6. it really is the same... here it seems a little off because we're not messing with actionTypes, action creators, thunk and objects to update the state
         7. Related props?
+
             - loading and error?
               Yes they are!
+
+            - `dispatchHttp({type: "RES"})` does not work with Axios... it is not working for me
+
+            - switched back to const [isLoading, setIsLoading] = useState(false)
+
         8. ## HTTP with useReducer? Thunk alternative?
+
+    13. useContext()
+
+    -

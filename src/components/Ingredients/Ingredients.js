@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useReducer } from "react"; // useState,
+import React, { useState, useEffect, useCallback, useReducer } from "react";
 import IngredientList from "./IngredientList";
 import IngredientForm from "./IngredientForm";
 import Search from "./Search";
@@ -24,14 +24,14 @@ const ingredientReducer = (currentIngredient, action) => {
 
 const httpReducer = (curHttpState, action) => {
 	switch (action.type) {
+		case "RES":
+			return { loading: false, ...curHttpState };
+
 		case "CLEAR":
 			return { ...curHttpState, error: null };
 
 		case "SEND":
 			return { loading: true, error: null };
-
-		case "RESPONSE":
-			return { loading: false, ...curHttpState };
 
 		case "ERROR":
 			return { error: action.error, loading: false };
@@ -49,7 +49,7 @@ const Ingredients = () => {
 	});
 
 	// const [ingredients, setIngredients] = useState([]);
-	// const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	// const [error, setError] = useState();
 
 	// not needed because GET method is done in <Search>
@@ -77,13 +77,13 @@ const Ingredients = () => {
 		dispatchHttp({
 			type: "SEND",
 		});
-		// setIsLoading(true);
+		setIsLoading(true);
 		/* AXIOS API */
 		axios
 			.post("axiosAPI-ingredients.json", ingredient)
 			.then((response) => {
-				dispatchHttp({ type: "RESPONSE" });
-				// setIsLoading(false);
+				dispatchHttp({ type: "RES" });
+				setIsLoading(false);
 				// console.log(response.data.name);
 				// setIngredients((prevState) => [
 				// 	...prevState,
@@ -104,7 +104,7 @@ const Ingredients = () => {
 					error: error.message + " - Something went wrong!",
 				});
 				// setError(error.message + " - Something went wrong!");
-				// setIsLoading(false);
+				setIsLoading(false);
 			});
 
 		/* FETCH API */
@@ -141,7 +141,7 @@ const Ingredients = () => {
 		dispatchHttp({
 			type: "SEND",
 		});
-		// setIsLoading(true);
+		setIsLoading(true);
 		/* fetchAPI syntax */
 		// fetch(`...firebaseio.com/ingredients/${id}.json`, {
 		// 	method: "DELETE",
@@ -160,8 +160,8 @@ const Ingredients = () => {
 		axios
 			.delete(`axiosAPI-ingredients/${id}.json`)
 			.then((res) => {
-				dispatchHttp({ type: "RESPONSE" });
-				// setIsLoading(false);
+				dispatchHttp({ type: "RES" });
+				setIsLoading(false);
 				// setIngredients((prevState) =>
 				// 	prevState.filter((ingredient) => id !== ingredient.id)
 				// );
@@ -173,7 +173,7 @@ const Ingredients = () => {
 			.catch((error) => {
 				// console.log(error, error.message); error.message = "Network Error"
 				// setError(error.message + " - Something went wrong!");
-				// setIsLoading(false);
+				setIsLoading(false);
 				dispatchHttp({
 					type: "ERROR",
 					error: error.message + " - Something went wrong!",
@@ -199,7 +199,8 @@ const Ingredients = () => {
 			)}
 
 			<IngredientForm
-				loading={httpState.loading}
+				// loading={httpState.loading}
+				loading={isLoading}
 				onAddIngredient={addIngredientHandler}
 			/>
 
