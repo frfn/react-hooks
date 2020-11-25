@@ -417,3 +417,9 @@ Function Components Everywhere!
     6.  you can return an array, object, any, from a custom hook
     7.  look at 82. Custom Hook
         -   better there, Max did not explain well. but i can figure it out looking at the code
+
+    ## Main takeaway from Custom Hooks
+
+    You share **LOGIC**, and **DATA**, but locally in the component that uses it!
+
+    It will take practice and you do NOT have to master it right away.
