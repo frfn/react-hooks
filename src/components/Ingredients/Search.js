@@ -9,7 +9,7 @@ const Search = React.memo((props) => {
 	/* the string inputted */
 	const [filter, setFilter] = useState("");
 
-	/* for reference! */
+	/* for reference! so we can use the current value of filter, once the filter value goes into closure, we're able to compare current against the value locked */
 	const inputRef = useRef();
 
 	useEffect(() => {
@@ -32,7 +32,7 @@ const Search = React.memo((props) => {
 				const query =
 					filter.length === 0
 						? ""
-						: `?orderBy="title"&equalTo="${filter}"`;
+						: `?orderBy="title"&equalTo="${filter}"`; // syntax to filter
 				axios
 					.get("axiosAPI-ingredients.json" + query)
 					.then((res) => {
@@ -40,7 +40,7 @@ const Search = React.memo((props) => {
 						for (let ing in res.data) {
 							fetchedIngredients.push({
 								id: ing,
-								...res.data[ing],
+								...res.data[ing], // will return something like {amount: "4", title: "Apples"}
 							});
 						}
 						onLoadIngredients(fetchedIngredients);

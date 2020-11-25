@@ -77,21 +77,29 @@ const Ingredients = () => {
 	};
 
 	const removeIngredientHandler = (id) => {
+		/* fetchAPI syntax */
+		// fetch(`...firebaseio.com/ingredients/${id}.json`, {
+		// 	method: "DELETE",
+		// })
+		// 	.then(/* you can move logic here to update state */)
+		// 	.then()
+		// 	.catch();
+
 		/* if false, remove ingredient */
 		// const updatedIngredient = ingredients.filter(
 		// 	(ingredient) => id !== ingredient.id
 		// );
 
-		console.log(id);
+		// console.log(id);
 
 		axios
-			.delete("axiosAPI-ingredients/" + id + ".json")
-			.then((res) => console.log(res))
+			.delete(`axiosAPI-ingredients/${id}.json`)
+			.then((res) => {
+				setIngredients((prevState) =>
+					prevState.filter((ingredient) => id !== ingredient.id)
+				);
+			})
 			.catch((error) => console.log(error));
-
-		setIngredients((prevState) =>
-			prevState.filter((ingredient) => id !== ingredient.id)
-		);
 	};
 
 	const filteredIngredientsHandler = useCallback((filteredIngredients) => {

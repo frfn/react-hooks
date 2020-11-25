@@ -304,3 +304,11 @@ Function Components Everywhere!
             - this reduces redundant timers in memory, optimizied. Only one timer instead.
 
     9.  deleting values in the database!
+
+        -   did it myself :)
+
+    10. ## UI - error modal + loading indicator!
+
+        -   create state that is for loading!
+
+        1.
