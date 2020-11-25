@@ -406,3 +406,14 @@ Function Components Everywhere!
     > NOTE: you use useCallback for every function in Ingredients.js -- that is correct, you only use useMemo() if you want the component to keep the same value even after being rerendered so it doesn't have to keep grabbing the value from the parent component
 
 15. Custom Hooks
+
+    Let's create hooks!
+
+    1.  naming convention must always be useSomething (ie. useHttp)
+    2.  in the hook, you can use stateful features, useState/Reducer/Effect
+    3.  any component that uses this will have their OWN snapshot of the hook, so each state is different for every component that uses it
+    4.  Modify where the reducer goes, Ingredients.js to http.js
+    5.                   useReducer(), Ingredients.js to http.js
+    6.  you can return an array, object, any, from a custom hook
+    7.  look at 82. Custom Hook
+        -   better there, Max did not explain well. but i can figure it out looking at the code

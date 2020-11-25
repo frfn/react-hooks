@@ -28,6 +28,7 @@ const ingredientReducer = (currentIngredient, action) => {
 	}
 };
 
+/* controls loading + modal */
 const httpReducer = (curHttpState, action) => {
 	switch (action.type) {
 		case "RES":

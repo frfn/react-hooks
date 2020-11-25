@@ -1,13 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import axios from "../../axios/axios";
 import Card from "../UI/Card";
+import ErrorModal from "../UI/ErrorModal";
 import "./Search.css";
+// import LoadingIndicator from "../UI/LoadingIndicator";
 
 const Search = React.memo((props) => {
 	const { onLoadIngredients } = props;
 
 	/* the string inputted */
 	const [filter, setFilter] = useState("");
+	const [error, setError] = useState();
+	const [loading, setLoading] = useState(false);
 
 	/* for reference! so we can use the current value of filter, once the filter value goes into closure, we're able to compare current against the value locked */
 	const inputRef = useRef();
@@ -33,9 +37,11 @@ const Search = React.memo((props) => {
 					filter.length === 0
 						? ""
 						: `?orderBy="title"&equalTo="${filter}"`; // syntax to filter
+				setLoading(true);
 				axios
 					.get("axiosAPI-ingredients.json" + query)
 					.then((res) => {
+						setLoading(false);
 						const fetchedIngredients = [];
 						for (let ing in res.data) {
 							fetchedIngredients.push({
@@ -47,6 +53,8 @@ const Search = React.memo((props) => {
 					})
 					.catch((err) => {
 						console.log(err);
+						setLoading(false);
+						setError(err);
 					});
 			}
 		}, 500); // 500 ms
@@ -62,12 +70,18 @@ const Search = React.memo((props) => {
 		setFilter(event.target.value);
 	};
 
+	const clearError = () => {
+		setError(false);
+	};
+
 	return (
 		<section className="search">
+			{error && (
+				<ErrorModal onClose={clearError}>{error.message}</ErrorModal>
+			)}
 			<Card>
 				<div className="search-input">
-					<label>Filter by Title</label>
-
+					<label>Filter by Title</label> {loading && "Loading..."}
 					{/* two way binding for the value */}
 					<input
 						ref={inputRef}
