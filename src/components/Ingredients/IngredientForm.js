@@ -1,17 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import LoadingIndicator from "../UI/LoadingIndicator";
 import Card from "../UI/Card";
 import "./IngredientForm.css";
 
+/* Component rerenders every time a keystroke is entered... is there a way to fix? React.memo? useMemo()? setTimeout()? */
+
 const IngredientForm = React.memo((props) => {
+	const [currentItem, setItem] = useState("");
 	const [currentTitle, setTitle] = useState("");
 	const [currentAmount, setAmount] = useState("");
+	const titleRef = useRef();
 
 	console.log("RERENDER after each key stroke?");
 
 	const submitHandler = (event) => {
 		event.preventDefault();
 		props.onAddIngredient({
+			item: currentItem,
 			title: currentTitle,
 			amount: currentAmount,
 		});
@@ -64,6 +69,7 @@ const IngredientForm = React.memo((props) => {
 
 						{/* two way binding */}
 						<input
+							ref={titleRef}
 							type="text"
 							id="title"
 							name="title"
@@ -71,10 +77,28 @@ const IngredientForm = React.memo((props) => {
 							onChange={(event) => {
 								// const newTitle = event.target.value;
 								// setTitle(newTitle);
-								setTitle(event.target.value);
+								setTitle(event.target.value); // updating will always cause a rerender
 							}}
 						/>
 					</div>
+
+					<div className="form-control">
+						<label htmlFor="item">Item</label>
+
+						{/* two way binding */}
+						<input
+							type="text"
+							id="item"
+							name="item"
+							value={currentItem}
+							onChange={(event) => {
+								// const newTitle = event.target.value;
+								// setTitle(newTitle);
+								setItem(event.target.value); // updating will always cause a rerender
+							}}
+						/>
+					</div>
+
 					<div className="form-control">
 						<label htmlFor="amount">Amount</label>
 						<input

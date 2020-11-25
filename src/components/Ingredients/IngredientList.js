@@ -15,6 +15,7 @@ const IngredientList = (props) => {
 						onClick={props.onRemoveItem.bind(this, ig.id)}
 					>
 						<span>{ig.title}</span>
+						<span>{ig.item}</span>
 						<span>{ig.amount}x</span>
 					</li>
 				))}

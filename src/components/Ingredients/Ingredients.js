@@ -201,9 +201,9 @@ const Ingredients = () => {
 		});
 	}, []); // [setIngredients] , since setIngredients is dependant of function
 
-	const clearError = () => {
+	const clearError = useCallback(() => {
 		dispatchHttp({ type: "CLEAR" });
-	};
+	}, []);
 
 	const ingredientList = useMemo(
 		() => (
