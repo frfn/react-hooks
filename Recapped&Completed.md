@@ -151,4 +151,22 @@ Relearns:
 
 ## `hooks.js`
 
--
+`shared` VS `hooks`
+
+-   `/shared` folder consists of helper functions, such as `updateObject()` and `checkValidity()`
+
+    -   they're just `utility` methods, one function
+
+-   `/hooks `folder consists of `custom` hooks, or help functions that's a little more than just utility methods
+
+    -   custom hooks can contain `state`, `data`, `logic`, `async` calls
+
+`shared` VS `hooks` conclusion
+
+-   you will know when to `differentiate` a utility method vs a custom hook
+
+-   `utility` methods are `simple` and `usually` just a function
+
+-   `custom hooks` are more `robust`, can include `reducers`, execute `async` calls, have `state` and `logic`
+
+-   `usually` will come from a `pattern` that is `used throughout` the application
