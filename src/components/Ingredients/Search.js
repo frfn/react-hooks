@@ -8,13 +8,13 @@ import "./Search.css";
 // React.memo === shouldComponentUpdate, so update if there is a change!
 // check 1a. burgerbuilder to see the SECOND argument that it takes, Modal.js! It also explains in burgerbuilder OG, that React.memo === shouldComponentUpdate!
 const Search = React.memo((props) => {
-	// console.log("RERENDER FROM SEARCH?");
+	console.log("rerender");
 	const { onLoadIngredients } = props; // this is the SETTER for the array in Ingredients.js
 
 	/* user input */
 	const [filter, setFilter] = useState("");
 
-	const [refFilter, setRefFilter] = useState("");
+	const [refFilter, setRefFilter] = useState(""); // this works, but it IS not the same as useRef, useRef if the ACTUAL value
 
 	/* if any errors that comes from axios */
 	const [error, setError] = useState();
@@ -29,7 +29,14 @@ const Search = React.memo((props) => {
 	useEffect(() => {
 		/* you can set a reference to setTimeout by assigning it to constant, `timer` */
 		const timer = setTimeout(() => {
+			console.log("FILTER:", filter);
+
+			console.log("INPUTREF.CURRENT.VALUE:", inputRef.current.value);
+
 			/* 
+				`filter` value is what is BEING typed
+				`ref.current.value` is what is ALREADY typed.
+
 				`filter` value is locked in when timer starts, 
 				it will NOT be value the user has entered AFTER the timer expires,
 				it will be the value during the time it is LOCKED IN.
@@ -45,6 +52,7 @@ const Search = React.memo((props) => {
 
 			// once the `filter` value has CAUGHT up with the current value in the text field, then axios call
 			// `filter` value will be lagging behind because of the SET TIMEOUT of 500 for the timer!
+			// inputRef.current.value is literally that, the current value!
 			if (filter === /* refFilter */ inputRef.current.value) {
 				const query =
 					filter.length === 0
@@ -70,7 +78,7 @@ const Search = React.memo((props) => {
 						setError(err);
 					});
 			}
-		}, 500); // 500 ms
+		}, 2000); // 2 seconds!
 
 		/* componentWillUnmount, or clean up, must always return a function */
 		/* look at notes, key stroke for every letter starts a timer, clean it up and only search at the LAST key stroke */
@@ -97,7 +105,7 @@ const Search = React.memo((props) => {
 
 		*/
 		return () => {
-			clearTimeout(timer);
+			clearTimeout(timer); // this really does work!, we ARE clearing the execessive timers! Woohoo!!
 		};
 	}, [refFilter, filter, onLoadIngredients, inputRef]); // shouldComponentUpdate()
 

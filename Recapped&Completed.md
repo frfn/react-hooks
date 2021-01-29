@@ -1,4 +1,4 @@
-# REACT HOOKS
+# React Hooks-Recapped and Completed.
 
 takeaways:
 
@@ -145,7 +145,9 @@ Relearns:
 
 -   `useRef()` to grab the value of the input field
 
-    -   knowing this provides you a new tool, in an experiment in `Search.js`, using `refFilter` that I created also works when used as a reference!
+    -   knowing this provides you a new tool, in an experiment in `Search.js`, I used `refFilter`, I thought it worked, but it's locking the same value in! since it isn't changed mutably!!
+
+    -   `useRef()` is the actual value of what's inside the input field
 
 -   it actually is real simple, I though it will be challenging to revisit, but, the notes in `Search.js` is phenomenal
 
