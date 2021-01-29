@@ -11,7 +11,8 @@ const IngredientList = (props) => {
 				{props.ingredients.map((ig) => (
 					<li
 						key={ig.id}
-						onClick={props.onRemoveItem.bind(this, ig.id)}
+						// onClick={props.onRemoveItem.bind(this, ig.id)}
+						onClick={() => props.onRemoveItem(ig.id)}
 					>
 						<span>{ig.title}</span>
 						<span>{ig.item}</span>

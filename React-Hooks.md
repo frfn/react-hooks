@@ -2,6 +2,39 @@
 
 Function Components Everywhere!
 
+`componentDidMount()`
+
+    useEffect(() => {
+        this will only run useEffect ONCE, during mounting
+    }, [])
+
+`shouldComponentUpdate()`
+
+    use React.memo() , this is used as shouldComponentUpdate() !
+
+`componentDidUpdate()`
+
+    useEffect(() => {
+        points to prop, sees if prop updates then will run code inside useEffect()
+    }, [props.xyz])
+
+`componentWillUnmount()`
+
+    useEffect(()=> {
+        // code
+        return () => {
+            // this is where clean up happens, componentWillUnmount
+        }
+    }, [props.xyz])
+
+Run the effect every time, no dependancy list for `useEffect()`
+
+    useEffect( () => {
+    // Giving it no second argument acts as both componentDidMount and componentDidUpdate,
+    // as in it runs first on mount and then on every re-render
+    // could be helpful in searching functions, such as GOOGLE SEARCH or the React Hooks search function!
+    })
+
 ## What are Hooks?
 
 1. Revisit: Functional Component
@@ -69,11 +102,17 @@ Function Components Everywhere!
     -   adding `value={}` for the input for two way binding
 
         > TIP: using empty string `""` as a value for `amount` are always strings, so it will be easier to manage as string!
+
         > useState() will always return TWO elements
+
         > first element === current state snapshot
+
         > second element === a function that allows to update state
+
         > pass in an anonymous function so that the value will be the correct value for udpateState! `(prevState)`
+
         > useState() -- updating does not MERGE, you must create another useState() or you have to set the object and use the spread operator ...obj , ...array
+
         > CLOSURE: a function that closes over surrounding values, which the `event` is closed
 
         -   the anonymous function passed into updateState() is a closure, as explained, React DOM pools in events.
@@ -97,12 +136,11 @@ Function Components Everywhere!
 
             > TIP: what is closure?
             > Want to make a counter, where all functions can use it, but also make sure that the counter variable is NOT global?
-            > const add = () => {
 
-                let counter = 0;
-                return () => counter + 1
-
-            }
+                const add = () => {
+                    let counter = 0;
+                    return () => counter + 1
+                }
 
 ### Array Destructuring
 
@@ -143,9 +181,12 @@ Function Components Everywhere!
 -   `fetch()` API takes a url, it does a `GET` request by default, so an argument is needed, an object that sets the `GET` to `POST`
 -   `JSON` is library that contains `.stringify()` which transforms javascript objects to JSON
 -   headers?
+
     -   you must set it
     -   it's configured in Firebase
+
         `headers: {'Content-Type': 'application/json'}`
+
 -   `axios`
 
     -   easier to use :), look at code
@@ -181,17 +222,13 @@ Function Components Everywhere!
 
     ### Lifecycle Method Equivalent
 
-    -   componentDidMount: it runs one time
-        `useEffect(() => { this will only run useEffect ONCE, during startup }, [])`
+    -   `componentDidMount`: it runs one time : `useEffect(() => { this will only run useEffect ONCE, during startup }, [])`
 
-    -   shouldComponentUpdate: it runs only when certain item is updated
-        `useEffect(() => { points to prop, sees if prop updates then will run code inside useEffect()}, [props.xyz])`
+    -   `shouldComponentUpdate`: it runs only when certain item is updated : `React.memo( ... )`
 
-    -   componentWillUnmount: clean up code ie. clearing out a timer
-        `useEffect(() => { ...code return () => { // this is where clean up happens, componentWillUnmount } }, [props.xyz])`
+    -   `componentWillUnmount`: clean up code ie. clearing out a timer : `useEffect(() => { ...code return () => { // this is where clean up happens, componentWillUnmount } }, [props.xyz])`
 
-    -   componentDidUpdate: it runs every time state/item is updated
-        `useEffect(() => { // no second argument means it RUNS every render cycle. })`
+    -   `componentDidUpdate`: it runs every time state/item is updated based on the prop inside the array : `useEffect(() => { ... }, [props.xyz])`
 
 ## More on useEffect()
 
@@ -342,9 +379,9 @@ Function Components Everywhere!
 
     -   Consider this code:
 
-        `console.log(name); // prints name state, e.g. 'Manu'`
-        `setName('Max');`
-        `console.log(name); // ??? what gets printed? 'Max'?`
+            console.log(name); // prints name state, e.g. 'Manu'
+            setName('Max');
+            console.log(name); // ??? what gets printed? 'Max'?
 
         You could think that accessing the name state after setName('Max'); should yield the new value (e.g. 'Max') but this is **NOT** the case. Keep in mind, that the new state value is **only** available in the next component render cycle (which gets scheduled by calling setName()).
 
@@ -413,7 +450,7 @@ Function Components Everywhere!
     2.  in the hook, you can use stateful features, useState/Reducer/Effect
     3.  any component that uses this will have their OWN snapshot of the hook, so each state is different for every component that uses it
     4.  Modify where the reducer goes, Ingredients.js to http.js
-    5.                   useReducer(), Ingredients.js to http.js
+    5.  useReducer(), Ingredients.js to http.js
     6.  you can return an array, object, any, from a custom hook
     7.  look at 82. Custom Hook
         -   better there, Max did not explain well. but i can figure it out looking at the code

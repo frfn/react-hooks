@@ -1,17 +1,22 @@
 import React, {
-	useState,
+	useState, // state management
 	// useEffect,
-	useCallback,
-	useReducer,
-	useMemo,
+	useCallback, // saving function render so that the function is NOT changed, this is cool, probably saved rendering time
+	useMemo, // saves the VALUE from rerender cycles, it does NOT destroy it!
+	useReducer, // this uses a reducer, similar to Redux, but NOT at all Redux, use Redux hahaha!!
 } from "react";
+
+// components
 import IngredientList from "./IngredientList";
 import IngredientForm from "./IngredientForm";
 import Search from "./Search";
+
+// depedencies -- things we need
 import axios from "../../axios/axios";
 import ErrorModal from "../UI/ErrorModal";
 
-/* similar to redux... */
+/* similar to redux... IT IS INITIALIZED WITH useReducer inside the functional component */
+// a function that returns something, here it's an array!
 const ingredientReducer = (currentIngredient, action) => {
 	switch (action.type) {
 		case "SET":
@@ -49,18 +54,18 @@ const httpReducer = (curHttpState, action) => {
 };
 
 const Ingredients = () => {
-	const [userIngredient, dispatch] = useReducer(ingredientReducer, []);
+	const [userIngredient, dispatch] = useReducer(ingredientReducer, []); // initializing the reducer with an array, ex. SET will be a empty array, dispatch IS USED along with the Search component!
 	const [httpState, dispatchHttp] = useReducer(httpReducer, {
 		loading: false,
 		error: null,
 	});
 
-	const [isLoading, setIsLoading] = useState(false);
+	const [isLoading, setIsLoading] = useState(false); // needed because DISPATCH AINT WORKING WITH AXIOS, it needs to be with fetch since it has 2 .then()'s!
 
 	// const [error, setError] = useState();
 	// const [ingredients, setIngredients] = useState([]);
 
-	// not needed because GET method is done in <Search>
+	// not needed because GET method is done in <Search>, we call the grabbing of data FROM THE SEARCH COMPONENT!
 	/* useEffect(() => {
 		axios
 			.get("axiosAPI-ingredients.json")
@@ -81,12 +86,14 @@ const Ingredients = () => {
 	// 	console.log("update?", userIngredient);
 	// }, [userIngredient]);
 
+	// take note of useCallback, we want to preserve this function, every rerender, because the function DOES change. it takes in a second argument, [], just like useEffect!
 	const addIngredientHandler = useCallback(
 		(ingredient) => {
 			dispatchHttp({
 				type: "SEND",
 			});
-			setIsLoading(true);
+			setIsLoading(true); // this is for the loading animation!,
+
 			/* AXIOS API */
 			axios
 				.post("axiosAPI-ingredients.json", ingredient)
@@ -150,6 +157,7 @@ const Ingredients = () => {
 		] // setIsLoading & dispatchHttp does not have to be updated
 	);
 
+	// take note again, useCallback, let's preserve this function!
 	const removeIngredientHandler = useCallback((id) => {
 		dispatchHttp({
 			type: "SEND",
@@ -194,6 +202,7 @@ const Ingredients = () => {
 			});
 	}, []);
 
+	// useCallback! this is a function that is important, it will be USED in <Search /> component
 	const filteredIngredientsHandler = useCallback((filteredIngredients) => {
 		// setIngredients(filteredIngredients);
 		dispatch({
@@ -202,10 +211,12 @@ const Ingredients = () => {
 		});
 	}, []); // [setIngredients] , since setIngredients is dependant of function
 
+	/* this clears the error! */
 	const clearError = useCallback(() => {
 		dispatchHttp({ type: "CLEAR" });
 	}, []);
 
+	// check this out! useMemo!, we want to preserve this Component | value!, different from saving functions!
 	const ingredientList = useMemo(
 		() => (
 			<IngredientList
@@ -230,6 +241,7 @@ const Ingredients = () => {
 
 			<section>
 				<Search onLoadIngredients={filteredIngredientsHandler} />
+				{/* the method IS PASSED down to Search, Search will THEN call it over inside it's self, TAKE NOTE that this how they are connected! */}
 				{ingredientList}
 				{/* 
         Moving to ingredientList

@@ -17,6 +17,8 @@ const IngredientForm = React.memo((props) => {
 
 	console.log("RERENDER after each key stroke?");
 
+	/* WE DIDNT USE THAT WAY!! THE { ...state, [name]: value } way */
+
 	const submitHandler = (event) => {
 		event.preventDefault();
 		props.onAddIngredient({
