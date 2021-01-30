@@ -29,10 +29,6 @@ const Search = React.memo((props) => {
 	useEffect(() => {
 		/* you can set a reference to setTimeout by assigning it to constant, `timer` */
 		const timer = setTimeout(() => {
-			console.log("FILTER:", filter);
-
-			console.log("INPUTREF.CURRENT.VALUE:", inputRef.current.value);
-
 			/* 
 				`filter` value is what is BEING typed
 				`ref.current.value` is what is ALREADY typed.
@@ -53,6 +49,10 @@ const Search = React.memo((props) => {
 			// once the `filter` value has CAUGHT up with the current value in the text field, then axios call
 			// `filter` value will be lagging behind because of the SET TIMEOUT of 500 for the timer!
 			// inputRef.current.value is literally that, the current value!
+
+			console.log("FILTER:", filter);
+			console.log("INPUTREF.CURRENT.VALUE:", inputRef.current.value);
+
 			if (filter === /* refFilter */ inputRef.current.value) {
 				const query =
 					filter.length === 0

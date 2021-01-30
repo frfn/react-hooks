@@ -2,6 +2,16 @@
 
 takeaways:
 
+-   `Custom Hooks`
+
+    -   could not understand what he was explaining, I had a better time looking at the code and seeing how it works!
+
+    -   sometimes seeing is better than an explanation
+
+    -   look at React - Hooks | custom | advanced ...
+
+        -   it shows the custom hook there! Just a reducer, etc.
+
 -   `React-Hooks.md` is written nicely, explains the module succinctly.
 
 We looked at how Search uses the function filteredIngredientsHandler to populate the array
